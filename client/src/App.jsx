@@ -41,6 +41,15 @@ export default function App() {
     setScreen("upload");
   };
 
+  const handleDeleteEverythingWithConfirm = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all memories? This will wipe your local browser memory store."
+    );
+    if (confirmed) {
+      handleResetToUpload();
+    }
+  };
+
   const handleAnalysisComplete = (data) => {
     setAnalysisData(data);
     setScreen("results");
@@ -49,25 +58,38 @@ export default function App() {
   if (screen === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <div className="text-sm font-medium text-stone-500 animate-pulse">
-          Loading Conversation Repairer...
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-lg animate-pulse">
+            CR
+          </div>
+          <div className="text-sm font-medium text-stone-600">
+            Loading Conversation Repairer...
+          </div>
         </div>
       </div>
     );
   }
 
+  const memoryCount = storeData?.memories?.length || 0;
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 antialiased selection:bg-amber-200 selection:text-stone-900">
       <main className="pb-16">
         {screen === "upload" && (
-          <UploadScreen onStartProcessing={handleStartProcessing} />
+          <UploadScreen
+            onStartProcessing={handleStartProcessing}
+            hasStoredMemories={memoryCount > 0}
+            storedCount={memoryCount}
+            onViewStoredMemories={() => setScreen("dashboard")}
+            onDeleteEverything={handleDeleteEverythingWithConfirm}
+          />
         )}
 
         {screen === "processing" && jobData && (
           <ProcessingScreen
             jobData={jobData}
             onComplete={handleProcessingComplete}
-            onCancel={handleResetToUpload}
+            onCancel={handleDeleteEverythingWithConfirm}
           />
         )}
 
@@ -76,6 +98,7 @@ export default function App() {
             storeData={storeData}
             onReset={handleResetToUpload}
             onNavigateToRepair={() => setScreen("repair")}
+            onDeleteEverything={handleDeleteEverythingWithConfirm}
           />
         )}
 
@@ -84,7 +107,7 @@ export default function App() {
             storeData={storeData}
             onAnalysisComplete={handleAnalysisComplete}
             onNavigateToDashboard={() => setScreen("dashboard")}
-            onDeleteEverything={handleResetToUpload}
+            onDeleteEverything={handleDeleteEverythingWithConfirm}
           />
         )}
 
@@ -93,7 +116,7 @@ export default function App() {
             analysisData={analysisData}
             onBackToRepair={() => setScreen("repair")}
             onNavigateToDashboard={() => setScreen("dashboard")}
-            onDeleteEverything={handleResetToUpload}
+            onDeleteEverything={handleDeleteEverythingWithConfirm}
           />
         )}
       </main>

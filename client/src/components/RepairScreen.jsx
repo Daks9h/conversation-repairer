@@ -98,12 +98,12 @@ export default function RepairScreen({
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       {/* Top Navigation Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-stone-200">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between pb-4 border-b border-stone-200 gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={onNavigateToDashboard}
-            className="text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+            className="text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <span>&larr;</span>
             <span>View Memories ({memories.length})</span>
@@ -116,9 +116,13 @@ export default function RepairScreen({
         <button
           type="button"
           onClick={onDeleteEverything}
-          className="text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+          className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200 hover:border-rose-300 rounded-xl transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+          title="Delete all stored memories"
         >
-          Delete Everything
+          <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          <span>Delete Everything</span>
         </button>
       </div>
 
@@ -218,6 +222,29 @@ export default function RepairScreen({
             </button>
           </div>
         </form>
+
+        {/* Privacy Notice */}
+        <div className="rounded-xl bg-amber-50/50 border border-amber-200/80 p-4 space-y-1 text-xs text-stone-700">
+          <div className="flex items-center gap-1.5 font-bold text-amber-950">
+            <svg
+              className="w-4 h-4 text-amber-700 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+            <span>Privacy Notice</span>
+          </div>
+          <p className="leading-relaxed">
+            Chat text is sent to a hosted Gemma model for analysis, the server stores nothing, memories are saved only in this browser.
+          </p>
+        </div>
       </div>
     </div>
   );

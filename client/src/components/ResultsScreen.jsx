@@ -57,12 +57,13 @@ export default function ResultsScreen({
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Top Navigation */}
-      <div className="flex items-center justify-between pb-4 border-b border-stone-200">
-        <div className="flex items-center gap-3">
+      {/* Top Navigation */}
+      <div className="flex flex-wrap items-center justify-between pb-4 border-b border-stone-200 gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={onBackToRepair}
-            className="text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+            className="text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <span>&larr;</span>
             <span>Analyze Another</span>
@@ -70,7 +71,7 @@ export default function ResultsScreen({
           <button
             type="button"
             onClick={onNavigateToDashboard}
-            className="text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg transition-colors"
+            className="text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
           >
             Stored Memories
           </button>
@@ -79,10 +80,23 @@ export default function ResultsScreen({
         <button
           type="button"
           onClick={onDeleteEverything}
-          className="text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+          className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200 hover:border-rose-300 rounded-xl transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+          title="Delete all stored memories"
         >
-          Delete Everything
+          <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          <span>Delete Everything</span>
         </button>
+      </div>
+
+      {/* How This Works banner */}
+      <div className="p-3.5 bg-amber-50/70 rounded-xl border border-amber-200/80 text-xs text-amber-950 flex items-center gap-2.5 shadow-2xs">
+        <span className="text-base text-amber-700 shrink-0">💡</span>
+        <div>
+          <strong className="font-bold text-amber-950">How this works: </strong>
+          <span className="text-amber-900">suggestions are possibilities, not facts about what someone feels.</span>
+        </div>
       </div>
 
       {/* Safety Notice if present */}

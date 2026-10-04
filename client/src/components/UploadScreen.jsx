@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { parseWhatsAppChat } from "../lib/whatsappParser.js";
 
-export default function UploadScreen({ onStartProcessing }) {
+export default function UploadScreen({
+  onStartProcessing,
+  hasStoredMemories,
+  storedCount = 0,
+  onViewStoredMemories,
+  onDeleteEverything
+}) {
   const [parsedData, setParsedData] = useState(null);
   const [fileName, setFileName] = useState("");
   const [selectedMe, setSelectedMe] = useState("");
@@ -25,11 +31,6 @@ export default function UploadScreen({ onStartProcessing }) {
         const text = event.target?.result;
         const result = parseWhatsAppChat(text);
         setParsedData(result);
-
-        // Pre-select friend if there are exactly 2 senders
-        if (result.senders.length === 2) {
-          // Will be set when user chooses 'me'
-        }
       } catch (err) {
         setParseError(err.message || "Failed to parse WhatsApp export file.");
       }
@@ -62,22 +63,54 @@ export default function UploadScreen({ onStartProcessing }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
+    <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12 space-y-6">
+      {/* Existing Memories Banner if stored */}
+      {hasStoredMemories && (
+        <div className="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <span className="text-amber-800 font-bold text-lg">💡</span>
+            <div className="text-xs text-stone-700">
+              You have <strong className="text-stone-900 font-bold">{storedCount} relationship memories</strong> saved in this browser.
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onViewStoredMemories}
+              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-xs font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer"
+            >
+              View Memories ({storedCount})
+            </button>
+            <button
+              type="button"
+              onClick={onDeleteEverything}
+              className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200 rounded-xl transition-colors shadow-2xs flex items-center gap-1 cursor-pointer"
+              title="Delete all stored memories"
+            >
+              <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Delete Everything</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-900 font-bold text-2xl mb-4 shadow-sm">
+      <div className="text-center pt-2">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-900 font-bold text-2xl mb-3 shadow-sm border border-amber-200/60">
           CR
         </div>
         <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight sm:text-4xl">
           Conversation Repairer
         </h1>
-        <p className="mt-2 text-base text-stone-600">
-          Turn your conversation history into useful relationship context.
+        <p className="mt-2 text-sm sm:text-base text-stone-600 max-w-lg mx-auto">
+          Turn your conversation history into evidence-backed relationship context to resolve misunderstandings.
         </p>
       </div>
 
       {/* Upload Box */}
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-5 sm:p-8 space-y-6">
         {!parsedData ? (
           <div>
             <label
@@ -97,11 +130,11 @@ export default function UploadScreen({ onStartProcessing }) {
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
-              <span className="text-sm font-semibold text-stone-800 group-hover:text-amber-800">
+              <span className="text-sm font-semibold text-stone-800 group-hover:text-amber-800 text-center">
                 Click to select exported WhatsApp chat (.txt)
               </span>
-              <span className="text-xs text-stone-600 mt-1">
-                Works with Android and iPhone exports
+              <span className="text-xs text-stone-500 mt-1 text-center">
+                Works with Android and iPhone exports (without media)
               </span>
               <input
                 id="chat-upload"
@@ -192,7 +225,7 @@ export default function UploadScreen({ onStartProcessing }) {
               <label className="block text-sm font-bold text-stone-800 mb-2">
                 Which of these is you?
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {parsedData.senders.map((sender) => {
                   const isSelected = selectedMe === sender;
                   return (
@@ -200,14 +233,14 @@ export default function UploadScreen({ onStartProcessing }) {
                       key={sender}
                       type="button"
                       onClick={() => handleSelectMe(sender)}
-                      className={`p-3.5 rounded-xl border text-left font-medium transition-all ${
+                      className={`p-3.5 rounded-xl border text-left font-medium transition-all cursor-pointer ${
                         isSelected
                           ? "border-amber-600 bg-amber-50/80 text-amber-950 ring-2 ring-amber-500/20 shadow-sm"
                           : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50"
                       }`}
                     >
                       <div className="text-sm font-bold">{sender}</div>
-                      <div className="text-xs text-stone-600 mt-0.5">
+                      <div className="text-xs text-stone-500 mt-0.5">
                         {isSelected ? "This is you (Me)" : "Click to select"}
                       </div>
                     </button>
@@ -241,10 +274,10 @@ export default function UploadScreen({ onStartProcessing }) {
         )}
 
         {/* Privacy Notice */}
-        <div className="rounded-xl bg-stone-50 border border-stone-200/80 p-4 space-y-1.5 text-xs text-stone-600">
-          <div className="flex items-center gap-1.5 font-bold text-stone-800">
+        <div className="rounded-xl bg-amber-50/50 border border-amber-200/80 p-4 space-y-1.5 text-xs text-stone-700">
+          <div className="flex items-center gap-1.5 font-bold text-amber-950">
             <svg
-              className="w-4 h-4 text-amber-600"
+              className="w-4 h-4 text-amber-700 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -256,13 +289,10 @@ export default function UploadScreen({ onStartProcessing }) {
                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
               />
             </svg>
-            Privacy Notice
+            <span>Privacy Notice</span>
           </div>
-          <p>
-            The raw chat file is parsed directly in your browser and is never stored on the server.
-            Text chunks are transmitted to the Gemma AI endpoint for memory extraction.
-            The server is stateless and does not store or log conversations.
-            Extracted memories are saved strictly in your browser's local storage.
+          <p className="leading-relaxed">
+            Chat text is sent to a hosted Gemma model for analysis, the server stores nothing, memories are saved only in this browser.
           </p>
         </div>
 
@@ -271,7 +301,7 @@ export default function UploadScreen({ onStartProcessing }) {
           <button
             type="button"
             onClick={() => setShowExportHelp(!showExportHelp)}
-            className="flex items-center justify-between w-full text-left text-xs font-semibold text-stone-600 hover:text-stone-900 transition-colors py-1"
+            className="flex items-center justify-between w-full text-left text-xs font-semibold text-stone-600 hover:text-stone-900 transition-colors py-1 cursor-pointer"
           >
             <span>How to export a WhatsApp chat</span>
             <span className="text-stone-400">{showExportHelp ? "▲" : "▼"}</span>
@@ -283,10 +313,10 @@ export default function UploadScreen({ onStartProcessing }) {
                 <strong className="text-stone-800">Android:</strong> Open the chat &rarr; tap the three dots (&vellip;) in the top-right &rarr; <em>More</em> &rarr; <em>Export chat</em> &rarr; select <strong>Without media</strong>.
               </div>
               <div>
-                <strong className="text-stone-800">iPhone (iOS):</strong> Open the chat &rarr; tap the contact name at the top &rarr; scroll down &rarr; tap <em>Export Chat</em> &rarr; select <strong>Without Media</strong>.
+                <strong className="text-stone-800">iPhone:</strong> Open the chat &rarr; tap the contact name at the top &rarr; scroll down to <em>Export Chat</em> &rarr; select <strong>Attach No Media</strong>.
               </div>
-              <div className="text-stone-600 pt-1">
-                Save the resulting <code>.txt</code> file and upload it above.
+              <div className="text-[11px] text-stone-500 pt-1">
+                Both exported formats (.txt) are supported.
               </div>
             </div>
           )}
