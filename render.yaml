@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: conversation-repairer
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LLM_PROVIDER
+        value: hosted
+      - key: GEMMA_API_KEY
+        sync: false
+      - key: GEMMA_MODEL
+        value: gemma-4-26b-a4b-it
