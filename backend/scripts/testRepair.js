@@ -1,4 +1,4 @@
-import { retrieveRelevantMemories } from "../../client/src/lib/retrieve.js";
+import { retrieveRelevantMemories } from "../../frontend/src/lib/retrieve.js";
 import { repairConversation } from "../routes/repair.js";
 
 console.log("==========================================");

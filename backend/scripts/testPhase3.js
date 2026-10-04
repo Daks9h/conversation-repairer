@@ -1,4 +1,4 @@
-import { dedupeMemories, jaccardSimilarity, tokenize } from "../src/lib/dedupe.js";
+import { dedupeMemories, jaccardSimilarity, tokenize } from "../../frontend/src/lib/dedupe.js";
 
 console.log("==========================================");
 console.log("     PHASE 3: DEDUPE & LOGIC TESTS        ");

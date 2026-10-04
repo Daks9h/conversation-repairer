@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { parseWhatsAppChat } from "../src/lib/whatsappParser.js";
+import { parseWhatsAppChat } from "../../frontend/src/lib/whatsappParser.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

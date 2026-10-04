@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { parseWhatsAppChat } from "../../client/src/lib/whatsappParser.js";
-import { chunkMessages } from "../../client/src/lib/chunker.js";
+import { parseWhatsAppChat } from "../../frontend/src/lib/whatsappParser.js";
+import { chunkMessages } from "../../frontend/src/lib/chunker.js";
 import { extractFromChunk } from "../routes/extract.js";
 
 const __filename = fileURLToPath(import.meta.url);

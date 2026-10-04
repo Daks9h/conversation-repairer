@@ -1,5 +1,5 @@
 import { validateRepair, softenCertainty, trimToWords } from "../lib/validateRepair.js";
-import { parseWhatsAppChat } from "../../client/src/lib/whatsappParser.js";
+import { parseWhatsAppChat } from "../../frontend/src/lib/whatsappParser.js";
 
 console.log("==========================================");
 console.log("     PHASE 5: VALIDATION & ERROR TESTS    ");

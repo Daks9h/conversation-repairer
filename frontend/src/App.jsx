@@ -6,6 +6,8 @@ import RepairScreen from "./components/RepairScreen.jsx";
 import ResultsScreen from "./components/ResultsScreen.jsx";
 import { loadMemoriesStore, clearMemoriesStore } from "./lib/memoryStore.js";
 
+import { Loader2 } from "lucide-react";
+
 export default function App() {
   const [screen, setScreen] = useState("loading"); // 'loading' | 'upload' | 'processing' | 'dashboard' | 'repair' | 'results'
   const [jobData, setJobData] = useState(null);
@@ -59,11 +61,12 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-lg animate-pulse">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-lg border border-amber-200/60 shadow-xs">
             CR
           </div>
-          <div className="text-sm font-medium text-stone-600">
-            Loading Conversation Repairer...
+          <div className="flex items-center gap-2 text-xs font-medium text-stone-500">
+            <Loader2 className="w-4 h-4 animate-spin text-amber-800" strokeWidth={2} />
+            <span>Loading Conversation Repairer...</span>
           </div>
         </div>
       </div>

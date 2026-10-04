@@ -1,4 +1,14 @@
 import React, { useState } from "react";
+import {
+  ArrowLeft,
+  Trash2,
+  Info,
+  ShieldAlert,
+  HelpCircle,
+  AlertOctagon,
+  Copy,
+  Check
+} from "lucide-react";
 
 export default function ResultsScreen({
   analysisData,
@@ -55,17 +65,16 @@ export default function ResultsScreen({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-8 space-y-8">
       {/* Top Navigation */}
-      {/* Top Navigation */}
-      <div className="flex flex-wrap items-center justify-between pb-4 border-b border-stone-200 gap-3">
+      <div className="flex flex-wrap items-center justify-between pb-4 border-b border-stone-200/90 gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={onBackToRepair}
             className="text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <span>&larr;</span>
+            <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.75} />
             <span>Analyze Another</span>
           </button>
           <button
@@ -80,30 +89,28 @@ export default function ResultsScreen({
         <button
           type="button"
           onClick={onDeleteEverything}
-          className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200 hover:border-rose-300 rounded-xl transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200 hover:border-rose-300 rounded-xl transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
           title="Delete all stored memories"
         >
-          <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
+          <Trash2 className="w-3.5 h-3.5 text-rose-600" strokeWidth={1.75} />
           <span>Delete Everything</span>
         </button>
       </div>
 
       {/* How This Works banner */}
-      <div className="p-3.5 bg-amber-50/70 rounded-xl border border-amber-200/80 text-xs text-amber-950 flex items-center gap-2.5 shadow-2xs">
-        <span className="text-base text-amber-700 shrink-0">💡</span>
+      <div className="p-4 bg-amber-50/70 rounded-xl border border-amber-200/80 text-xs text-amber-950 flex items-center gap-2.5 shadow-xs">
+        <Info className="w-4 h-4 text-amber-700 shrink-0" strokeWidth={1.75} />
         <div>
-          <strong className="font-bold text-amber-950">How this works: </strong>
+          <strong className="font-semibold text-amber-950">How this works: </strong>
           <span className="text-amber-900">suggestions are possibilities, not facts about what someone feels.</span>
         </div>
       </div>
 
       {/* Safety Notice if present */}
       {safety_note && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 space-y-1">
-          <div className="font-bold flex items-center gap-2 text-sm">
-            <span>🛡️</span>
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 space-y-1 shadow-xs">
+          <div className="font-semibold flex items-center gap-2 text-xs sm:text-sm">
+            <ShieldAlert className="w-4 h-4 text-rose-700 shrink-0" strokeWidth={1.75} />
             <span>Safety Note</span>
           </div>
           <p className="text-xs leading-relaxed">{safety_note}</p>
@@ -111,12 +118,12 @@ export default function ResultsScreen({
       )}
 
       {/* Section 1 & 2: Possible Issue & Text Evidence */}
-      <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-5">
+      <div className="bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 sm:p-6 space-y-4">
         <div>
-          <span className="text-xs uppercase tracking-wider font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-900 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-md">
             Communication Diagnosis
           </span>
-          <h2 className="text-xl font-bold text-stone-900 mt-2">
+          <h2 className="text-lg sm:text-xl font-bold text-stone-900 mt-2 tracking-tight">
             Possible Communication Issue
           </h2>
           <p className="text-sm text-stone-700 leading-relaxed mt-1">
@@ -126,7 +133,7 @@ export default function ResultsScreen({
 
         {evidence_in_text.length > 0 && (
           <div className="space-y-1.5 pt-3 border-t border-stone-100">
-            <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">
               Evidence in conversation:
             </span>
             <div className="flex flex-wrap gap-2">
@@ -143,10 +150,10 @@ export default function ResultsScreen({
         )}
 
         {/* Section 4: Uncertainty Line (Always visible) */}
-        <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200/70 text-xs text-amber-950 flex items-start gap-2">
-          <span className="text-sm">💡</span>
+        <div className="p-3.5 bg-amber-50/60 rounded-xl border border-amber-200/70 text-xs text-amber-950 flex items-start gap-2.5">
+          <HelpCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" strokeWidth={1.75} />
           <div>
-            <span className="font-bold">Uncertainty Note: </span>
+            <span className="font-semibold">Uncertainty Note: </span>
             <span>
               {uncertainty ||
                 "People's emotional states cannot be known with certainty from text alone. These are possibilities, not facts."}
@@ -156,36 +163,36 @@ export default function ResultsScreen({
       </div>
 
       {/* Section 3: Relevant Context (Historical Memory Grounding) */}
-      <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-stone-100">
           <div>
-            <span className="text-xs uppercase tracking-wider font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-900 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-md">
               Historical Context
             </span>
-            <h3 className="text-lg font-bold text-stone-900 mt-1">
+            <h3 className="text-base sm:text-lg font-bold text-stone-900 mt-1.5 tracking-tight">
               Relevant Relationship Context
             </h3>
           </div>
-          <span className="text-xs text-stone-600">
+          <span className="text-xs text-stone-500">
             {relevant_context.length} relevant reference{relevant_context.length === 1 ? "" : "s"}
           </span>
         </div>
 
         {relevant_context.length === 0 ? (
-          <div className="p-4 bg-stone-50 rounded-xl border border-dashed border-stone-200 text-xs text-stone-600 italic">
+          <div className="p-4 bg-stone-50 rounded-xl border border-dashed border-stone-200 text-xs text-stone-500 italic">
             No relevant history found
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {relevant_context.map((ctxItem, idx) => {
               const matchedMem = retrievedMemories.find((m) => m.id === ctxItem.memory_id);
               return (
                 <div
                   key={idx}
-                  className="p-4 rounded-xl border border-amber-200/70 bg-amber-50/30 space-y-2 text-xs"
+                  className="p-4 rounded-xl border border-stone-200/80 bg-stone-50/50 space-y-2 text-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-stone-900 text-sm">
+                    <span className="font-semibold text-stone-900 text-sm">
                       {matchedMem ? matchedMem.text : `Memory [${ctxItem.memory_id}]`}
                     </span>
                     <span className="text-[10px] uppercase font-mono text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">
@@ -194,13 +201,13 @@ export default function ResultsScreen({
                   </div>
 
                   {matchedMem?.evidence && (
-                    <div className="text-stone-600 italic bg-white/70 p-2 rounded border border-amber-100">
+                    <div className="text-stone-600 italic bg-white p-2 rounded-lg border border-stone-200/70">
                       &ldquo;{matchedMem.evidence}&rdquo;
                     </div>
                   )}
 
-                  <div className="text-stone-700">
-                    <strong className="text-stone-900">Why relevant: </strong>
+                  <div className="text-stone-700 leading-relaxed">
+                    <strong className="text-stone-900 font-medium">Why relevant: </strong>
                     {ctxItem.why_relevant}
                   </div>
                 </div>
@@ -212,16 +219,16 @@ export default function ResultsScreen({
 
       {/* Section 5: What to Avoid */}
       {avoid.length > 0 && (
-        <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-3">
+        <div className="bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 sm:p-6 space-y-3">
           <div className="flex items-center gap-2 text-stone-900">
-            <span className="text-lg">🚫</span>
-            <h3 className="text-lg font-bold">What to Avoid</h3>
+            <AlertOctagon className="w-4 h-4 text-stone-700 shrink-0" strokeWidth={1.75} />
+            <h3 className="text-base sm:text-lg font-bold tracking-tight">What to Avoid</h3>
           </div>
           <ul className="space-y-1.5 text-xs text-stone-700">
             {avoid.map((item, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <span className="text-rose-500 font-bold">•</span>
-                <span>{item}</span>
+                <span className="text-rose-600 font-bold shrink-0">-</span>
+                <span className="leading-relaxed">{item}</span>
               </li>
             ))}
           </ul>
@@ -231,13 +238,13 @@ export default function ResultsScreen({
       {/* Section 6: Three Suggestion Cards (Soft, Casual, Direct) */}
       <div className="space-y-4">
         <div>
-          <span className="text-xs uppercase tracking-wider font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-900 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-md">
             Suggested Replies
           </span>
-          <h3 className="text-xl font-bold text-stone-900 mt-1">
+          <h3 className="text-lg sm:text-xl font-bold text-stone-900 mt-1.5 tracking-tight">
             Choose a Repair Style
           </h3>
-          <p className="text-xs text-stone-600 mt-0.5">
+          <p className="text-xs text-stone-500 mt-0.5">
             You can edit any message directly before copying.
           </p>
         </div>
@@ -254,7 +261,7 @@ export default function ResultsScreen({
             return (
               <div
                 key={sug.style}
-                className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-5 flex flex-col justify-between space-y-4 hover:border-amber-300 transition-all"
+                className="bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 flex flex-col justify-between space-y-4 hover:border-stone-300 transition-all"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -263,7 +270,7 @@ export default function ResultsScreen({
                       {meta.badge}
                     </span>
                   </div>
-                  <p className="text-[11px] text-stone-600">{meta.desc}</p>
+                  <p className="text-[11px] text-stone-500">{meta.desc}</p>
                 </div>
 
                 <div className="flex-1">
@@ -275,30 +282,28 @@ export default function ResultsScreen({
                     value={sug.message}
                     onChange={(e) => handleMessageChange(sug.style, e.target.value)}
                     rows={4}
-                    className="w-full text-xs text-stone-800 p-3 bg-stone-50 border border-stone-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 leading-relaxed font-sans"
+                    className="w-full text-xs text-stone-800 p-3 bg-stone-50/70 border border-stone-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 leading-relaxed font-sans"
                   />
                 </div>
 
                 <button
                   type="button"
                   onClick={() => handleCopy(sug.style, sug.message)}
-                  className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-1.5 ${
+                  className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer ${
                     isCopied
-                      ? "bg-emerald-600 text-white"
-                      : "bg-amber-600 hover:bg-amber-700 text-white"
+                      ? "bg-emerald-700 text-white"
+                      : "bg-amber-700 hover:bg-amber-800 text-white"
                   }`}
                 >
                   {isCopied ? (
                     <>
-                      <span>✓</span>
+                      <Check className="w-3.5 h-3.5" strokeWidth={2} />
                       <span>Copied!</span>
                     </>
                   ) : (
                     <>
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span>Copy Message</span>
+                      <Copy className="w-3.5 h-3.5" strokeWidth={1.75} />
+                      <span>Copy {meta.title.split(" ")[0]}</span>
                     </>
                   )}
                 </button>

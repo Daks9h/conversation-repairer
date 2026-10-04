@@ -3,6 +3,13 @@ import { chunkMessages } from "../lib/chunker.js";
 import { extractMemories } from "../lib/api.js";
 import { dedupeMemories } from "../lib/dedupe.js";
 import { saveMemoriesStore } from "../lib/memoryStore.js";
+import {
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  RotateCcw,
+  ArrowRight
+} from "lucide-react";
 
 export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
   const { messages, me, friend } = jobData;
@@ -154,31 +161,28 @@ export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
   const progressPercent = totalChunks > 0 ? Math.round((currentChunk / totalChunks) * 100) : 0;
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-16 text-center">
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-8 space-y-6">
-        {/* Spinner or Alert Icon */}
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-900 mb-2">
+    <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-8 sm:py-16 text-center">
+      <div className="max-w-xl mx-auto bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 sm:p-6 space-y-6">
+        {/* Status Icon */}
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-900 mx-auto">
           {isProcessing ? (
-            <svg className="w-7 h-7 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
+            <Loader2 className="w-6 h-6 animate-spin text-amber-800" strokeWidth={2} />
           ) : allFailed ? (
-            <span className="text-2xl">⚠️</span>
+            <AlertTriangle className="w-6 h-6 text-rose-600" strokeWidth={1.75} />
           ) : (
-            <span className="text-2xl">⚡</span>
+            <CheckCircle2 className="w-6 h-6 text-amber-800" strokeWidth={1.75} />
           )}
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-stone-900">
+          <h2 className="text-xl font-bold text-stone-900 tracking-tight">
             {isProcessing
               ? "Analyzing Relationship Context"
               : allFailed
               ? "Extraction Encountered an Error"
               : "Extraction Finished with Notes"}
           </h2>
-          <p className="text-sm text-stone-600 mt-1">
+          <p className="text-xs sm:text-sm text-stone-500 mt-1">
             {isProcessing
               ? "Gemma is reading chat chunks and verifying memory evidence..."
               : allFailed
@@ -189,14 +193,14 @@ export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
 
         {/* Progress Bar */}
         <div className="space-y-2">
-          <div className="flex justify-between text-xs font-semibold text-stone-600">
+          <div className="flex justify-between text-xs font-medium text-stone-600">
             <span>{statusMessage}</span>
             <span>{progressPercent}%</span>
           </div>
-          <div className="w-full bg-stone-100 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
             <div
-              className={`h-2.5 rounded-full transition-all duration-300 ease-out ${
-                allFailed ? "bg-rose-500" : hasPartial ? "bg-amber-500" : "bg-amber-600"
+              className={`h-2 rounded-full transition-all duration-300 ease-out ${
+                allFailed ? "bg-rose-500" : hasPartial ? "bg-amber-600" : "bg-amber-700"
               }`}
               style={{ width: `${progressPercent}%` }}
             ></div>
@@ -205,14 +209,15 @@ export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
 
         {/* Warnings / Failures Notice */}
         {warnings.length > 0 && (
-          <div className="p-4 bg-rose-50/80 rounded-xl border border-rose-200 text-xs text-rose-900 text-left space-y-2">
-            <div className="font-bold flex items-center gap-1.5 text-rose-900">
-              <span>⚠️ Notice ({warnings.length}):</span>
+          <div className="p-4 bg-rose-50 border border-rose-200/80 rounded-xl text-xs text-rose-900 text-left space-y-2">
+            <div className="font-semibold flex items-center gap-1.5 text-rose-950">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" strokeWidth={1.75} />
+              <span>Notice ({warnings.length}):</span>
             </div>
             <div className="max-h-36 overflow-y-auto space-y-1 pr-1">
               {warnings.map((w, idx) => (
                 <div key={idx} className="text-rose-800 leading-snug">
-                  • {w}
+                  - {w}
                 </div>
               ))}
             </div>
@@ -221,21 +226,19 @@ export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
 
         {/* Actions for All Failed */}
         {allFailed && (
-          <div className="pt-2 flex items-center justify-center gap-3">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={handleRetryAll}
-              className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5"
+              className="px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
+              <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
               <span>Retry Extraction</span>
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-semibold transition-colors"
+              className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-medium transition-colors cursor-pointer"
             >
               Back to Upload
             </button>
@@ -244,33 +247,32 @@ export default function ProcessingScreen({ jobData, onComplete, onCancel }) {
 
         {/* Actions for Partial Progress (Keep partial progress) */}
         {hasPartial && (
-          <div className="pt-2 space-y-2.5">
-            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 text-left">
+          <div className="pt-2 space-y-3">
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 text-left">
               <strong>Partial Progress Saved:</strong> You have {extractedMemories.length} verified memories from successful chunks. You can proceed with these or retry the failed chunk(s).
             </div>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={handleProceedWithPartial}
-                className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
+                className="px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                Proceed with {extractedMemories.length} Memories &rarr;
+                <span>Proceed with {extractedMemories.length} Memories</span>
+                <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.75} />
               </button>
               <button
                 type="button"
                 onClick={handleRetryFailed}
-                className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
+                className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
+                <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
                 <span>Retry Failed Chunks ({failedChunkIndices.length})</span>
               </button>
             </div>
           </div>
         )}
 
-        <div className="text-xs text-stone-600 pt-2 border-t border-stone-100">
+        <div className="text-xs text-stone-500 pt-2 border-t border-stone-100">
           Raw chat text is never stored. Only verified quotes are saved locally.
         </div>
       </div>
