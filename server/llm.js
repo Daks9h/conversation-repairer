@@ -15,10 +15,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {string} prompt - Full user prompt with all instructions.
  * @param {object} options - Generation options.
  * @param {number} [options.temperature=0.2] - Sampling temperature.
- * @param {number} [options.timeoutMs=90000] - Request timeout in milliseconds (default 90s).
+ * @param {number} [options.timeoutMs=150000] - Request timeout in milliseconds (default 150s).
  * @returns {Promise<string>} Generated text with thought parts filtered out.
  */
-export async function generate(prompt, { temperature = 0.2, timeoutMs = 90000 } = {}) {
+export async function generate(prompt, { temperature = 0.2, timeoutMs = 150000 } = {}) {
   const provider = process.env.LLM_PROVIDER || "hosted";
 
   if (provider === "ollama") {
@@ -49,10 +49,7 @@ async function generateHosted(prompt, { temperature, timeoutMs }) {
       {
         parts: [{ text: prompt }]
       }
-    ],
-    generationConfig: {
-      temperature
-    }
+    ]
   };
 
   const data = await fetchWithRetry(endpoint, {

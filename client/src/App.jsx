@@ -1,54 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import UploadScreen from "./components/UploadScreen.jsx";
+import ProcessingScreen from "./components/ProcessingScreen.jsx";
+import MemoryDashboard from "./components/MemoryDashboard.jsx";
+import { loadMemoriesStore } from "./lib/memoryStore.js";
 
 export default function App() {
-  const [health, setHealth] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [screen, setScreen] = useState("loading"); // 'loading' | 'upload' | 'processing' | 'dashboard'
+  const [jobData, setJobData] = useState(null);
+  const [storeData, setStoreData] = useState(null);
 
+  // On initial mount, check if memories already exist in localStorage
   useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => {
-        setHealth(data.status);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setHealth('error');
-        setLoading(false);
-      });
+    const existingStore = loadMemoriesStore();
+    if (existingStore && Array.isArray(existingStore.memories) && existingStore.memories.length > 0) {
+      setStoreData(existingStore);
+      setScreen("dashboard");
+    } else {
+      setScreen("upload");
+    }
   }, []);
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-amber-50/60 to-orange-50/40">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-stone-200/70 p-8 text-center space-y-4">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-800 text-xl font-semibold">
-          CR
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900">
-          Conversation Repairer
-        </h1>
-        <p className="text-sm text-stone-600">
-          Turn your conversation history into useful relationship context.
-        </p>
+  const handleStartProcessing = (data) => {
+    setJobData(data);
+    setScreen("processing");
+  };
 
-        <div className="pt-4 border-t border-stone-100">
-          <div className="text-xs uppercase tracking-wider text-stone-600 font-medium mb-1">
-            Server Health Status
-          </div>
-          {loading ? (
-            <span className="text-sm text-stone-500">Checking /api/health...</span>
-          ) : health === 'ok' ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Server connected: ok
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              Server offline ({health})
-            </span>
-          )}
+  const handleProcessingComplete = (finalStore) => {
+    setStoreData(finalStore);
+    setScreen("dashboard");
+  };
+
+  const handleResetToUpload = () => {
+    setStoreData(null);
+    setJobData(null);
+    setScreen("upload");
+  };
+
+  if (screen === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <div className="text-sm font-medium text-stone-500 animate-pulse">
+          Loading Conversation Repairer...
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-stone-50 text-stone-800 antialiased selection:bg-amber-200 selection:text-stone-900">
+      <main className="pb-16">
+        {screen === "upload" && (
+          <UploadScreen onStartProcessing={handleStartProcessing} />
+        )}
+
+        {screen === "processing" && jobData && (
+          <ProcessingScreen
+            jobData={jobData}
+            onComplete={handleProcessingComplete}
+            onCancel={handleResetToUpload}
+          />
+        )}
+
+        {screen === "dashboard" && storeData && (
+          <MemoryDashboard
+            storeData={storeData}
+            onReset={handleResetToUpload}
+          />
+        )}
+      </main>
     </div>
   );
 }

@@ -1,0 +1,268 @@
+import React, { useState } from "react";
+import { parseWhatsAppChat } from "../lib/whatsappParser.js";
+
+export default function UploadScreen({ onStartProcessing }) {
+  const [parsedData, setParsedData] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [selectedMe, setSelectedMe] = useState("");
+  const [selectedFriend, setSelectedFriend] = useState("");
+  const [parseError, setParseError] = useState("");
+  const [showExportHelp, setShowExportHelp] = useState(false);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setParseError("");
+    setParsedData(null);
+    setSelectedMe("");
+    setSelectedFriend("");
+    setFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result;
+        const result = parseWhatsAppChat(text);
+        setParsedData(result);
+
+        // Pre-select friend if there are exactly 2 senders
+        if (result.senders.length === 2) {
+          // Will be set when user chooses 'me'
+        }
+      } catch (err) {
+        setParseError(err.message || "Failed to parse WhatsApp export file.");
+      }
+    };
+    reader.onerror = () => {
+      setParseError("Could not read file from disk.");
+    };
+    reader.readAsText(file);
+  };
+
+  const handleSelectMe = (sender) => {
+    setSelectedMe(sender);
+    if (parsedData?.senders) {
+      const other = parsedData.senders.find((s) => s !== sender);
+      if (other) {
+        setSelectedFriend(other);
+      }
+    }
+  };
+
+  const handleStart = () => {
+    if (!parsedData || !selectedMe) return;
+    const friend = selectedFriend || parsedData.senders.find((s) => s !== selectedMe) || "Friend";
+    onStartProcessing({
+      messages: parsedData.messages,
+      stats: parsedData.stats,
+      me: selectedMe,
+      friend
+    });
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-12">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-900 font-bold text-2xl mb-4 shadow-sm">
+          CR
+        </div>
+        <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight sm:text-4xl">
+          Conversation Repairer
+        </h1>
+        <p className="mt-2 text-base text-stone-600">
+          Turn your conversation history into useful relationship context.
+        </p>
+      </div>
+
+      {/* Upload Box */}
+      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
+        {!parsedData ? (
+          <div>
+            <label
+              htmlFor="chat-upload"
+              className="flex flex-col items-center justify-center border-2 border-dashed border-stone-300 rounded-xl p-8 hover:border-amber-500 hover:bg-amber-50/40 transition-colors cursor-pointer group"
+            >
+              <svg
+                className="w-10 h-10 text-stone-400 group-hover:text-amber-600 transition-colors mb-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <span className="text-sm font-semibold text-stone-800 group-hover:text-amber-800">
+                Click to select exported WhatsApp chat (.txt)
+              </span>
+              <span className="text-xs text-stone-600 mt-1">
+                Works with Android and iPhone exports
+              </span>
+              <input
+                id="chat-upload"
+                type="file"
+                accept=".txt"
+                onChange={handleFileUpload}
+                className="sr-only"
+              />
+            </label>
+
+            {parseError && (
+              <div className="mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm">
+                <span className="font-semibold">Error:</span> {parseError}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Parsed Summary & Sender Selection */
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-stone-100">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-800">
+                  File Loaded
+                </span>
+                <h3 className="text-lg font-bold text-stone-900">{fileName}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setParsedData(null);
+                  setSelectedMe("");
+                  setSelectedFriend("");
+                  setFileName("");
+                }}
+                className="text-xs font-medium text-stone-600 hover:text-rose-600 transition-colors underline"
+              >
+                Choose another file
+              </button>
+            </div>
+
+            {/* Chat Stats */}
+            <div className="grid grid-cols-2 gap-4 bg-amber-50/60 rounded-xl p-4 border border-amber-100 text-stone-800">
+              <div>
+                <div className="text-xs text-stone-600 font-medium">Messages Found</div>
+                <div className="text-xl font-bold text-stone-900">
+                  {parsedData.stats.count}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-stone-600 font-medium">Date Range</div>
+                <div className="text-sm font-semibold text-stone-900 mt-1">
+                  {parsedData.stats.firstDate} – {parsedData.stats.lastDate}
+                </div>
+              </div>
+            </div>
+
+            {/* Sender Selection */}
+            <div>
+              <label className="block text-sm font-bold text-stone-800 mb-2">
+                Which of these is you?
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {parsedData.senders.map((sender) => {
+                  const isSelected = selectedMe === sender;
+                  return (
+                    <button
+                      key={sender}
+                      type="button"
+                      onClick={() => handleSelectMe(sender)}
+                      className={`p-3.5 rounded-xl border text-left font-medium transition-all ${
+                        isSelected
+                          ? "border-amber-600 bg-amber-50/80 text-amber-950 ring-2 ring-amber-500/20 shadow-sm"
+                          : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50"
+                      }`}
+                    >
+                      <div className="text-sm font-bold">{sender}</div>
+                      <div className="text-xs text-stone-600 mt-0.5">
+                        {isSelected ? "This is you (Me)" : "Click to select"}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {selectedMe && (
+              <div className="text-xs text-stone-600">
+                Analyzing relationship between{" "}
+                <span className="font-semibold text-stone-800">{selectedMe}</span> and{" "}
+                <span className="font-semibold text-stone-800">{selectedFriend}</span>.
+              </div>
+            )}
+
+            {/* Start Button */}
+            <button
+              type="button"
+              disabled={!selectedMe}
+              onClick={handleStart}
+              className={`w-full py-3.5 px-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${
+                selectedMe
+                  ? "bg-amber-600 hover:bg-amber-700 text-white cursor-pointer"
+                  : "bg-stone-200 text-stone-400 cursor-not-allowed"
+              }`}
+            >
+              Start Analysis & Extract Memories
+            </button>
+          </div>
+        )}
+
+        {/* Privacy Notice */}
+        <div className="rounded-xl bg-stone-50 border border-stone-200/80 p-4 space-y-1.5 text-xs text-stone-600">
+          <div className="flex items-center gap-1.5 font-bold text-stone-800">
+            <svg
+              className="w-4 h-4 text-amber-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+            Privacy Notice
+          </div>
+          <p>
+            The raw chat file is parsed directly in your browser and is never stored on the server.
+            Text chunks are transmitted to the Gemma AI endpoint for memory extraction.
+            The server is stateless and does not store or log conversations.
+            Extracted memories are saved strictly in your browser's local storage.
+          </p>
+        </div>
+
+        {/* Help Accordion */}
+        <div className="pt-2 border-t border-stone-100">
+          <button
+            type="button"
+            onClick={() => setShowExportHelp(!showExportHelp)}
+            className="flex items-center justify-between w-full text-left text-xs font-semibold text-stone-600 hover:text-stone-900 transition-colors py-1"
+          >
+            <span>How to export a WhatsApp chat</span>
+            <span className="text-stone-400">{showExportHelp ? "▲" : "▼"}</span>
+          </button>
+
+          {showExportHelp && (
+            <div className="mt-3 space-y-2 text-xs text-stone-600 bg-stone-50/70 p-3.5 rounded-lg border border-stone-200">
+              <div>
+                <strong className="text-stone-800">Android:</strong> Open the chat &rarr; tap the three dots (&vellip;) in the top-right &rarr; <em>More</em> &rarr; <em>Export chat</em> &rarr; select <strong>Without media</strong>.
+              </div>
+              <div>
+                <strong className="text-stone-800">iPhone (iOS):</strong> Open the chat &rarr; tap the contact name at the top &rarr; scroll down &rarr; tap <em>Export Chat</em> &rarr; select <strong>Without Media</strong>.
+              </div>
+              <div className="text-stone-600 pt-1">
+                Save the resulting <code>.txt</code> file and upload it above.
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
