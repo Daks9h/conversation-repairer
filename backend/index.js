@@ -55,8 +55,8 @@ if (isProduction || fs.existsSync(frontendDist)) {
   });
 }
 
-// Start listening if run directly (skipped in serverless environments like Vercel)
-if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
+// Start listening if run directly
+if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
