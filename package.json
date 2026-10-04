@@ -9,6 +9,7 @@
     "client": "npm --prefix client run dev",
     "client:build": "npm --prefix client run build",
     "test:gemma": "node server/scripts/testGemma.js",
-    "test:parser": "node client/scripts/testParser.js"
+    "test:parser": "node client/scripts/testParser.js",
+    "test:extract": "node server/scripts/testExtract.js"
   }
 }

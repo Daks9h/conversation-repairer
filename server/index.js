@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import extractRouter from "./routes/extract.js";
 
 // Load .env from root
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +21,9 @@ app.use(express.json({ limit: "1mb" }));
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
+
+// Memory extraction endpoint
+app.use("/api/extract", extractRouter);
 
 // Start listening if run directly
 if (process.env.NODE_ENV !== "test") {
