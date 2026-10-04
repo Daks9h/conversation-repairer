@@ -101,23 +101,30 @@ export default function MemoryDashboard({
     <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-8 space-y-8">
       {/* Header card with proper 20-24px padding */}
       <div className="bg-white rounded-xl border border-stone-200/90 shadow-xs p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 mb-1.5">
-            <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200/60">
-              Relationship Context
-            </span>
-            <span className="text-xs text-stone-500">
-              {memories.length} memories extracted
-            </span>
+        <div className="flex items-center gap-4">
+          <img
+            src="/logo.png"
+            alt="Conversation Repairer"
+            className="w-12 h-12 rounded-xl shadow-xs border border-stone-200/80 object-cover shrink-0"
+          />
+          <div>
+            <div className="inline-flex items-center gap-2 mb-1">
+              <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200/60">
+                Relationship Context
+              </span>
+              <span className="text-xs text-stone-500">
+                {memories.length} memories extracted
+              </span>
+            </div>
+            <h1 className="text-2xl font-bold text-stone-900 tracking-tight">
+              {meta.me && meta.friend
+                ? `${meta.me} & ${meta.friend}`
+                : "Relationship Memory Dashboard"}
+            </h1>
+            <p className="text-xs text-stone-500 mt-0.5">
+              Based on {meta.messageCount || 0} messages • Stored locally in this browser
+            </p>
           </div>
-          <h1 className="text-2xl font-bold text-stone-900 tracking-tight">
-            {meta.me && meta.friend
-              ? `${meta.me} & ${meta.friend}`
-              : "Relationship Memory Dashboard"}
-          </h1>
-          <p className="text-xs text-stone-500 mt-1">
-            Based on {meta.messageCount || 0} messages - Stored locally in this browser
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">

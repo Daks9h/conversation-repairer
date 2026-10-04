@@ -105,10 +105,12 @@ export default function UploadScreen({
       )}
 
       {/* Header */}
-      <div className="max-w-2xl mx-auto text-center space-y-2">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-900 font-bold text-xl shadow-xs border border-amber-200/60">
-          CR
-        </div>
+      <div className="max-w-2xl mx-auto text-center space-y-3">
+        <img
+          src="/logo.png"
+          alt="Conversation Repairer Logo"
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mx-auto shadow-md border border-stone-200/80 object-cover"
+        />
         <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
           Conversation Repairer
         </h1>

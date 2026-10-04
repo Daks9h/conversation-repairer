@@ -61,9 +61,11 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-lg border border-amber-200/60 shadow-xs">
-            CR
-          </div>
+          <img
+            src="/logo.png"
+            alt="Conversation Repairer"
+            className="w-12 h-12 rounded-xl shadow-xs border border-stone-200/80 object-cover"
+          />
           <div className="flex items-center gap-2 text-xs font-medium text-stone-500">
             <Loader2 className="w-4 h-4 animate-spin text-amber-800" strokeWidth={2} />
             <span>Loading Conversation Repairer...</span>
