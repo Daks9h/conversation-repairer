@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import UploadScreen from "./components/UploadScreen.jsx";
 import ProcessingScreen from "./components/ProcessingScreen.jsx";
 import MemoryDashboard from "./components/MemoryDashboard.jsx";
-import { loadMemoriesStore } from "./lib/memoryStore.js";
+import RepairScreen from "./components/RepairScreen.jsx";
+import ResultsScreen from "./components/ResultsScreen.jsx";
+import { loadMemoriesStore, clearMemoriesStore } from "./lib/memoryStore.js";
 
 export default function App() {
-  const [screen, setScreen] = useState("loading"); // 'loading' | 'upload' | 'processing' | 'dashboard'
+  const [screen, setScreen] = useState("loading"); // 'loading' | 'upload' | 'processing' | 'dashboard' | 'repair' | 'results'
   const [jobData, setJobData] = useState(null);
   const [storeData, setStoreData] = useState(null);
+  const [analysisData, setAnalysisData] = useState(null);
 
   // On initial mount, check if memories already exist in localStorage
   useEffect(() => {
@@ -31,9 +34,16 @@ export default function App() {
   };
 
   const handleResetToUpload = () => {
+    clearMemoriesStore();
     setStoreData(null);
     setJobData(null);
+    setAnalysisData(null);
     setScreen("upload");
+  };
+
+  const handleAnalysisComplete = (data) => {
+    setAnalysisData(data);
+    setScreen("results");
   };
 
   if (screen === "loading") {
@@ -65,6 +75,25 @@ export default function App() {
           <MemoryDashboard
             storeData={storeData}
             onReset={handleResetToUpload}
+            onNavigateToRepair={() => setScreen("repair")}
+          />
+        )}
+
+        {screen === "repair" && (
+          <RepairScreen
+            storeData={storeData}
+            onAnalysisComplete={handleAnalysisComplete}
+            onNavigateToDashboard={() => setScreen("dashboard")}
+            onDeleteEverything={handleResetToUpload}
+          />
+        )}
+
+        {screen === "results" && analysisData && (
+          <ResultsScreen
+            analysisData={analysisData}
+            onBackToRepair={() => setScreen("repair")}
+            onNavigateToDashboard={() => setScreen("dashboard")}
+            onDeleteEverything={handleResetToUpload}
           />
         )}
       </main>

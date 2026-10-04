@@ -11,6 +11,7 @@
     "test:gemma": "node server/scripts/testGemma.js",
     "test:parser": "node client/scripts/testParser.js",
     "test:extract": "node server/scripts/testExtract.js",
-    "test:phase3": "node client/scripts/testPhase3.js"
+    "test:phase3": "node client/scripts/testPhase3.js",
+    "test:repair": "node server/scripts/testRepair.js"
   }
 }

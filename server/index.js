@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import extractRouter from "./routes/extract.js";
+import repairRouter from "./routes/repair.js";
 
 // Load .env from root
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,9 @@ app.get("/api/health", (req, res) => {
 
 // Memory extraction endpoint
 app.use("/api/extract", extractRouter);
+
+// Conversation repair endpoint
+app.use("/api/repair", repairRouter);
 
 // Start listening if run directly
 if (process.env.NODE_ENV !== "test") {

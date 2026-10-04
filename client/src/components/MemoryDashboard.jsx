@@ -41,7 +41,7 @@ const CATEGORIES = [
   }
 ];
 
-export default function MemoryDashboard({ storeData, onReset }) {
+export default function MemoryDashboard({ storeData, onReset, onNavigateToRepair }) {
   const [data, setData] = useState(storeData);
 
   const meta = data?.meta || {};
@@ -105,6 +105,14 @@ export default function MemoryDashboard({ storeData, onReset }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onNavigateToRepair}
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 transition-colors shadow-sm flex items-center gap-1.5"
+          >
+            <span>Repair a Conversation</span>
+            <span>&rarr;</span>
+          </button>
           <button
             type="button"
             onClick={handleDeleteEverything}
