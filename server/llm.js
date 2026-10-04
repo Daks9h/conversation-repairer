@@ -71,7 +71,7 @@ async function generateHosted(prompt, { temperature, timeoutMs }) {
     .filter((part) => !part.thought && typeof part.text === "string")
     .map((part) => part.text);
 
-  return textParts.join("").trim();
+  return cleanModelOutput(textParts.join("").trim());
 }
 
 /**
@@ -98,7 +98,18 @@ async function generateOllama(prompt, { temperature, timeoutMs }) {
     body: JSON.stringify(payload)
   }, timeoutMs);
 
-  return (data.response || "").trim();
+  return cleanModelOutput((data.response || "").trim());
+}
+
+/**
+ * Strips any inline thinking/reasoning XML tags (e.g. <thought> or <think>).
+ */
+function cleanModelOutput(text) {
+  if (typeof text !== "string") return "";
+  return text
+    .replace(/<thought[\s\S]*?<\/thought>/gi, "")
+    .replace(/<think[\s\S]*?<\/think>/gi, "")
+    .trim();
 }
 
 /**

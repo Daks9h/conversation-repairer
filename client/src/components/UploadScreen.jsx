@@ -113,8 +113,37 @@ export default function UploadScreen({ onStartProcessing }) {
             </label>
 
             {parseError && (
-              <div className="mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm">
-                <span className="font-semibold">Error:</span> {parseError}
+              <div className="mt-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-sm space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-lg">⚠️</span>
+                  <div>
+                    <div className="font-bold text-rose-950">Unable to parse file</div>
+                    <div className="text-xs text-rose-800 mt-0.5 leading-relaxed">
+                      {parseError.includes("empty") || parseError.includes("No WhatsApp messages")
+                        ? "The selected file is empty or contains no message lines. Please select an exported chat file with message history."
+                        : "The selected file doesn't match WhatsApp's export format. Please make sure you selected an unedited exported chat (.txt) without media."}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-1">
+                  <label
+                    htmlFor="chat-upload"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Retry / Choose File Again</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setParseError("")}
+                    className="text-xs text-rose-700 hover:text-rose-900 underline"
+                  >
+                    Dismiss
+                  </button>
+                </div>
               </div>
             )}
           </div>

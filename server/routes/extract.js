@@ -164,11 +164,33 @@ router.post("/", async (req, res) => {
     const result = await extractFromChunk({ chunk, me, friend });
     return res.json(result);
   } catch (err) {
-    const status = err.message.includes("Missing") || err.message.includes("required") ? 400 : 500;
+    const msg = err.message || "";
+    let status = 500;
+    let code = "AI_ERROR";
+    let userMessage = msg;
+
+    if (msg.includes("Missing") || msg.includes("required")) {
+      status = 400;
+      code = "EMPTY_INPUT";
+    } else if (msg.includes("timed out") || err.name === "AbortError") {
+      status = 504;
+      code = "TIMEOUT";
+      userMessage = "Extraction request timed out while communicating with the AI model.";
+    } else if (msg.includes("429") || msg.includes("rate limit")) {
+      status = 429;
+      code = "RATE_LIMIT";
+      userMessage = "AI rate limit reached during extraction. Please wait a moment.";
+    } else if (msg.includes("API key") || msg.includes("500") || msg.includes("503") || msg.includes("unavailable") || msg.includes("ECONNREFUSED")) {
+      status = 503;
+      code = "AI_UNAVAILABLE";
+      userMessage = "AI service is currently unavailable or returning an error.";
+    }
+
     return res.status(status).json({
-      error: err.message,
+      error: userMessage,
+      code,
       memories: [],
-      warnings: [err.message],
+      warnings: [userMessage],
       dropped: []
     });
   }

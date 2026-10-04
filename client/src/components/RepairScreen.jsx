@@ -31,11 +31,18 @@ export default function RepairScreen({
   };
 
   const handleAnalyze = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const raw = convoText.trim();
-    if (!raw) return;
+    if (!raw) {
+      setError({
+        code: "EMPTY_INPUT",
+        title: "Empty Conversation",
+        message: "Please paste a conversation before clicking analyze."
+      });
+      return;
+    }
 
-    setError("");
+    setError(null);
     setLoading(true);
 
     try {
@@ -64,7 +71,25 @@ export default function RepairScreen({
       });
     } catch (err) {
       console.error("Repair analysis error:", err);
-      setError(err.message || "Failed to analyze conversation. Please try again.");
+      let code = err.code || "AI_ERROR";
+      let title = "Analysis Failed";
+      let message = err.message || "An unexpected error occurred while analyzing the conversation.";
+
+      if (code === "TIMEOUT" || err.status === 504) {
+        title = "Request Timed Out";
+        message = "Gemma took longer than expected to analyze this conversation. The server may be busy.";
+      } else if (code === "RATE_LIMIT" || err.status === 429) {
+        title = "Rate Limit Reached";
+        message = "The AI service is experiencing high traffic. Please wait a few seconds and click Retry.";
+      } else if (code === "BAD_JSON" || err.status === 502) {
+        title = "Invalid Response Format";
+        message = "The AI model returned an unparseable response after retry. Clicking Retry will ask the model again.";
+      } else if (code === "AI_UNAVAILABLE" || err.status === 503) {
+        title = "AI Service Unavailable";
+        message = "Could not connect to the AI model. Please verify your internet connection or API settings.";
+      }
+
+      setError({ code, title, message });
     } finally {
       setLoading(false);
     }
@@ -137,8 +162,31 @@ export default function RepairScreen({
           )}
 
           {error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
-              <span className="font-semibold">Error:</span> {error}
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="font-bold text-rose-950 flex items-center gap-1.5 text-sm">
+                    <span>⚠️</span>
+                    <span>{error.title}</span>
+                  </div>
+                  <div className="text-rose-800 mt-1 leading-relaxed">
+                    {error.message}
+                  </div>
+                </div>
+                {error.code !== "EMPTY_INPUT" && (
+                  <button
+                    type="button"
+                    onClick={() => handleAnalyze()}
+                    disabled={loading || !convoText.trim()}
+                    className="shrink-0 px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white rounded-lg font-semibold flex items-center gap-1 transition-colors shadow-sm"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Retry</span>
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
